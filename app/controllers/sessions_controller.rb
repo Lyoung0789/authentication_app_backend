@@ -1,5 +1,6 @@
 class SessionsController < ApplicationController
-    include CurrentUserConcern
+    # include CurrentUserConcern
+    before_action :set_current_user
 
 
 
@@ -8,7 +9,7 @@ class SessionsController < ApplicationController
 
         if user
             session[:user_id] = user.id
-            remder json: {
+            render json: {
                 status: :created, 
                 logged_in: true, 
                 user: user
@@ -33,10 +34,17 @@ class SessionsController < ApplicationController
     end 
 
 
-    def log_out
+    def logout
         reset_session 
         render json: { status: 200, logged_out: true }
     end
+
+
+    def set_current_user
+        if session[:user_id]
+            @current_user = User.find(session[:user_id])
+        end 
+    end 
 
 
 end 
